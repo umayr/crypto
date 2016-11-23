@@ -3,12 +3,12 @@ GOENV := $(shell $(GO) env GOOS)_$(shell $(GO) env GOARCH)
 GOROOTINFO := $(shell $(GO) version | cut -d' ' -f 3)_$(GOENV)
 GO_COMMIT := 4f7363cd723d3c79081d3a201279f4e024620db9
 GO_BRANCH := release-branch.go1.7
-SUB_PACKAGES := aes sha1 
+SUB_PACKAGES := aes
 
 .PHONY: GOROOT
 GOROOT: GOROOT/$(GOENV)/.ok_$(GOROOTINFO)
 	@for pkg in $(SUB_PACKAGES); do \
-		rm -f GOROOT/$(GOENV)/pkg/*/crypto/$(pkg).a; \
+		rm -f GOROOT/$(GOENV)/pkg/*/crypto/$$pkg.a; \
 	done
 
 GOROOT/$(GOENV)/.ok_$(GOROOTINFO):
@@ -19,8 +19,8 @@ GOROOT/$(GOENV)/.ok_$(GOROOTINFO):
 	cp -r "$(shell $(GO) env GOROOT)/pkg/tool" GOROOT/$(GOENV)/pkg/tool
 	
 	@for pkg in $(SUB_PACKAGES); do \
-		rm -r GOROOT/$(GOENV)/src/crypto/$(pkg); \
-		ln -s ../../../../../$(pkg) GOROOT/linux_amd64/src/crypto/; \
+		rm -r GOROOT/$(GOENV)/src/crypto/$$pkg; \
+		ln -s ../../../../../$$pkg GOROOT/linux_amd64/src/crypto/; \
 	done;
 
 	GOROOT="$(CURDIR)/GOROOT/$(GOENV)" $(GO) install -v std
